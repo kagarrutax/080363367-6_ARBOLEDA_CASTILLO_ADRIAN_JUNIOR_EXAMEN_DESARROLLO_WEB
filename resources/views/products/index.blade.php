@@ -4,7 +4,13 @@
     <div class="glass-card p-4 animate-up">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold m-0"><i class="fas fa-list me-3"></i>Lista de Productos</h2>
-            <span class="badge bg-info text-dark p-2">{{ $products->count() }} Productos en total</span>
+            <div class="d-flex gap-3 align-items-center">
+                <span class="badge bg-info text-dark p-2">{{ $products->count() }} Productos en total</span>
+                <button type="button" class="btn btn-premium btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#createProductModal">
+                    <i class="fas fa-plus me-2"></i>Nuevo
+                </button>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -38,30 +44,27 @@
                             </td>
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <a href="{{ route('products.edit', $product) }}"
-                                        class="btn btn-outline-info btn-sm rounded-3">
+                                    <button type="button" class="btn btn-outline-info btn-sm rounded-3" data-bs-toggle="modal"
+                                        data-bs-target="#editProductModal{{ $product->id }}">
                                         <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('products.destroy', $product) }}" method="POST"
-                                        onsubmit="return confirm('¿Está seguro de eliminar este producto?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-3">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-3" data-bs-toggle="modal"
+                                        data-bs-target="#deleteProductModal{{ $product->id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
+
                     @empty
                         <tr>
                             <td colspan="6" class="text-center py-5">
                                 <i class="fas fa-folder-open fa-3x text-secondary mb-3"></i>
                                 <p class="text-secondary mb-0">No hay productos registrados aún.</p>
-                                <a href="{{ route('products.create') }}"
-                                    class="text-info text-decoration-none fw-bold mt-2 d-inline-block">
+                                <button type="button" class="btn btn-link text-info text-decoration-none fw-bold mt-2"
+                                    data-bs-toggle="modal" data-bs-target="#createProductModal">
                                     Crea el primer producto ahora
-                                </a>
+                                </button>
                             </td>
                         </tr>
                     @endforelse
@@ -69,4 +72,14 @@
             </table>
         </div>
     </div>
+
+    {{-- Main Create Modal --}}
+    @include('products.modals._create')
+
+    {{-- Modals for each product fuera del contenedor conflictivo --}}
+    @foreach($products as $product)
+        @include('products.modals._edit')
+        @include('products.modals._delete')
+    @endforeach
+
 @endsection
